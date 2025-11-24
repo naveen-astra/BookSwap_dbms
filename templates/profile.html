@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }} - Profile{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="profile-avatar me-4">
+                        <i class="fas fa-user-circle fa-4x text-white"></i>
+                    </div>
+                    <div class="text-start">
+                        <h1 class="page-title mb-1">{{ user.name }}</h1>
+                        <p class="page-subtitle mb-0">
+                            <i class="fas fa-envelope me-2"></i>{{ user.email }}
+                        </p>
+                        <p class="page-subtitle mb-0">
+                            <i class="fas fa-calendar me-2"></i>Member since {{ user.created_at.strftime('%B %Y') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                <h3 class="card-title text-primary">{{ total_books }}</h3>
+                <p class="card-text text-muted">Books Listed</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-exchange-alt fa-3x text-success mb-3"></i>
+                <h3 class="card-title text-success">{{ total_swaps }}</h3>
+                <p class="card-text text-muted">Successful Swaps</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                <h3 class="card-title text-warning">{{ "%.1f"|format(avg_rating|float) }}</h3>
+                <p class="card-text text-muted">Average Rating</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                <h3 class="card-title text-info">{{ total_reviews }}</h3>
+                <p class="card-text text-muted">Total Reviews</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_book') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-plus me-2"></i>Add New Book
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('my_books') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-book me-2"></i>View My Books
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('reviews') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-star me-2"></i>View All Reviews
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('available_books') }}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search me-2"></i>Browse Books
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Preview -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock me-2"></i>Recent Activity
+                </h5>
+                <a href="{{ url_for('notifications') }}" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="activity-timeline">
+                    <div class="activity-item">
+                        <div class="activity-icon bg-success">
+                            <i class="fas fa-user-plus text-white"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-1"><strong>Welcome to BookXchange!</strong></p>
+                            <small class="text-muted">Account created on {{ user.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                    </div>
+                    
+                    {% if total_books > 0 %}
+                    <div class="activity-item">
+                        <div class="activity-icon bg-primary">
+                            <i class="fas fa-book text-white"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-1">Listed {{ total_books }} book{{ 's' if total_books != 1 else '' }}</p>
+                            <small class="text-muted">Ready for swapping</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if total_swaps > 0 %}
+                    <div class="activity-item">
+                        <div class="activity-icon bg-warning">
+                            <i class="fas fa-exchange-alt text-white"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p class="mb-1">Completed {{ total_swaps }} swap{{ 's' if total_swaps != 1 else '' }}</p>
+                            <small class="text-muted">Building your reading network</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-trophy me-2"></i>Achievements
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="achievements-grid">
+                    {% if total_books >= 1 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-book"></i>
+                        <span>First Book</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if total_books >= 5 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-books"></i>
+                        <span>Book Collector</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if total_swaps >= 1 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-handshake"></i>
+                        <span>First Swap</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if total_swaps >= 5 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-star"></i>
+                        <span>Swap Master</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if avg_rating >= 4.0 and total_reviews >= 3 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-crown"></i>
+                        <span>Trusted Swapper</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if total_reviews >= 10 %}
+                    <div class="achievement-badge earned">
+                        <i class="fas fa-comment"></i>
+                        <span>Reviewer</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-avatar {
+    transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.1);
+}
+
+.activity-timeline {
+    position: relative;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.achievement-badge {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.achievement-badge.earned {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.achievement-badge i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.achievement-badge span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.achievement-badge:hover {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

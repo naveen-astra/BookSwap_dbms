@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-undo me-2"></i>Return Requests
+        </h1>
+        <p class="page-subtitle">Manage book return requests</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Received Return Requests (books others want returned) -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-inbox me-2"></i>Received Requests
+                        <small class="text-muted">(Books Others Want Returned)</small>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if received_requests %}
+                    <div class="table-responsive dark-table">
+                        <table class="table table-hover align-middle dark-table-content">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-book me-2"></i>Book</th>
+                                    <th><i class="fas fa-user me-2"></i>Owner</th>
+                                    <th><i class="fas fa-message me-2"></i>Message</th>
+                                    <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                    <th><i class="fas fa-cogs me-2"></i>Action</th>
+                                    <th><i class="fas fa-star me-2"></i>Review</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for req in received_requests %}
+                                <tr>
+                                    <td class="fw-bold">{{ req.title }} <small class="text-muted">by {{ req.author }}</small></td>
+                                    <td>{{ req.owner_name }}</td>
+                                    <td>{{ req.message or 'No message' }}</td>
+                                    <td>
+                                        {% if req.status == 'pending' %}
+                                            <span class="status-badge status-pending">
+                                                <i class="fas fa-clock me-1"></i>Pending
+                                            </span>
+                                        {% elif req.status == 'completed' %}
+                                            <span class="status-badge status-available">
+                                                <i class="fas fa-check-circle me-1"></i>Completed
+                                            </span>
+                                        {% elif req.status == 'rejected' %}
+                                            <span class="status-badge status-swapped">
+                                                <i class="fas fa-times-circle me-1"></i>Declined
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge status-swapped">
+                                                <i class="fas fa-question-circle me-1"></i>{{ req.status.title() }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if req.status == 'pending' %}
+                                            <a href="{{ url_for('respond_return', return_request_id=req.return_request_id, action='accept') }}" 
+                                               class="btn btn-success btn-sm me-2"
+                                               onclick="return confirm('Return this book to {{ req.owner_name }}?')">
+                                                <i class="fas fa-check me-1"></i>Return Book
+                                            </a>
+                                            <a href="{{ url_for('respond_return', return_request_id=req.return_request_id, action='reject') }}" 
+                                               class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Decline this return request?')">
+                                                <i class="fas fa-times me-1"></i>Decline
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">
+                                                <i class="fas fa-check me-1"></i>Completed
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if req.status == 'completed' and not req.review_given %}
+                                            <a href="{{ url_for('review', user_id=req.owner_id, book_id=req.book_id) }}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-star me-1"></i>Review Book
+                                            </a>
+                                        {% elif req.status == 'completed' and req.review_given %}
+                                            <span class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i>Review Given
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">
+                                                <i class="fas fa-minus me-1"></i>N/A
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Return Requests</h5>
+                        <p class="text-muted">No one has requested book returns from you yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sent Return Requests (books you want returned) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-paper-plane me-2"></i>Sent Requests
+                        <small class="text-muted">(Books You Want Returned)</small>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if sent_requests %}
+                    <div class="table-responsive dark-table">
+                        <table class="table table-hover align-middle dark-table-content">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-book me-2"></i>Book</th>
+                                    <th><i class="fas fa-user me-2"></i>Current Holder</th>
+                                    <th><i class="fas fa-message me-2"></i>Message</th>
+                                    <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                                    <th><i class="fas fa-calendar me-2"></i>Requested</th>
+                                    <th><i class="fas fa-info-circle me-2"></i>Holder Review</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for req in sent_requests %}
+                                <tr>
+                                    <td class="fw-bold">{{ req.title }} <small class="text-muted">by {{ req.author }}</small></td>
+                                    <td>{{ req.holder_name }}</td>
+                                    <td>{{ req.message or 'No message' }}</td>
+                                    <td>
+                                        {% if req.status == 'pending' %}
+                                            <span class="status-badge status-pending">
+                                                <i class="fas fa-clock me-1"></i>Pending
+                                            </span>
+                                        {% elif req.status == 'completed' %}
+                                            <span class="status-badge status-available">
+                                                <i class="fas fa-check-circle me-1"></i>Completed
+                                            </span>
+                                        {% elif req.status == 'rejected' %}
+                                            <span class="status-badge status-swapped">
+                                                <i class="fas fa-times-circle me-1"></i>Declined
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge status-swapped">
+                                                <i class="fas fa-question-circle me-1"></i>{{ req.status.title() }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ req.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {% if req.status == 'completed' and req.holder_reviewed %}
+                                            <span class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i>Holder Reviewed
+                                            </span>
+                                        {% elif req.status == 'completed' and not req.holder_reviewed %}
+                                            <span class="text-warning">
+                                                <i class="fas fa-clock me-1"></i>Pending Review
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">
+                                                <i class="fas fa-minus me-1"></i>N/A
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-paper-plane fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Return Requests Sent</h5>
+                        <p class="text-muted">You haven't requested any book returns yet.</p>
+                        <a href="{{ url_for('my_books') }}" class="btn btn-primary">
+                            <i class="fas fa-book me-1"></i>View My Books
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Override Bootstrap table styling with dark theme */
+.dark-table {
+    background: rgba(26, 26, 46, 0.9) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-table-content {
+    background: rgba(26, 26, 46, 0.9) !important;
+    color: #e8e9fa !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+}
+
+.dark-table-content thead {
+    background: linear-gradient(135deg, #00d4aa, #007acc) !important;
+    color: white !important;
+}
+
+.dark-table-content thead th {
+    border: none !important;
+    padding: 1.2rem 1rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.9rem !important;
+    color: white !important;
+    background: transparent !important;
+}
+
+.dark-table-content tbody tr {
+    transition: all 0.3s ease !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(26, 26, 46, 0.8) !important;
+}
+
+.dark-table-content tbody tr:hover {
+    background: rgba(0, 212, 170, 0.1) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 5px 15px rgba(0, 212, 170, 0.2) !important;
+}
+
+.dark-table-content tbody td {
+    border: none !important;
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    color: #e8e9fa !important;
+    background: transparent !important;
+}
+
+/* Enhanced status badges with better contrast */
+.status-badge {
+    padding: 0.5rem 1rem !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    border: 2px solid !important;
+}
+
+.status-available {
+    background: rgba(0, 212, 170, 0.2) !important;
+    color: #00ffcc !important;
+    border-color: #00d4aa !important;
+}
+
+.status-pending {
+    background: rgba(255, 193, 7, 0.2) !important;
+    color: #ffd700 !important;
+    border-color: #ffc107 !important;
+}
+
+.status-swapped {
+    background: rgba(255, 99, 71, 0.2) !important;
+    color: #ff6347 !important;
+    border-color: #ff4500 !important;
+}
+</style>
+
+{% endblock %}

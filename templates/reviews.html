@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews - BookXchange{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-star me-3"></i>Reviews & Ratings
+        </h1>
+        <p class="page-subtitle">See what others think about your books and your exchange experiences</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Reviews Received -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-inbox me-2"></i>
+                <h5 class="mb-0">Reviews Received</h5>
+                <span class="badge bg-light text-dark ms-auto">{{ received_reviews|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if received_reviews %}
+                    {% for review in received_reviews %}
+                    <div class="review-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="rating-stars">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2 fw-bold">{{ review.rating }}/5</span>
+                            </div>
+                            <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        
+                        <div class="review-meta">
+                            <strong>{{ review.reviewer_name }}</strong> reviewed your book
+                            <span class="text-primary">"{{ review.book_title }}"</span>
+                            by {{ review.book_author }}
+                        </div>
+                        
+                        {% if review.comment %}
+                        <div class="review-comment mt-2">
+                            <i class="fas fa-quote-left me-2 text-muted"></i>
+                            {{ review.comment }}
+                            <i class="fas fa-quote-right ms-2 text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-star-of-life fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No reviews received yet</h5>
+                        <p class="text-muted">Start swapping books to receive reviews from other users!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Given -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-paper-plane me-2"></i>
+                <h5 class="mb-0">Reviews Given</h5>
+                <span class="badge bg-light text-dark ms-auto">{{ given_reviews|length }}</span>
+            </div>
+            <div class="card-body">
+                {% if given_reviews %}
+                    {% for review in given_reviews %}
+                    <div class="review-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="rating-stars">
+                                {% for i in range(1, 6) %}
+                                    {% if i <= review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2 fw-bold">{{ review.rating }}/5</span>
+                            </div>
+                            <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        
+                        <div class="review-meta">
+                            You reviewed <strong>{{ review.reviewed_user_name }}</strong> for book
+                            <span class="text-primary">"{{ review.book_title }}"</span>
+                            by {{ review.book_author }}
+                        </div>
+                        
+                        {% if review.comment %}
+                        <div class="review-comment mt-2">
+                            <i class="fas fa-quote-left me-2 text-muted"></i>
+                            {{ review.comment }}
+                            <i class="fas fa-quote-right ms-2 text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-edit fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No reviews given yet</h5>
+                        <p class="text-muted">Complete some swaps and share your experience with others!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>
+                <h5 class="mb-0 d-inline">Review Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-primary">{{ received_reviews|length }}</h3>
+                            <p class="text-muted mb-0">Reviews Received</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-success">{{ given_reviews|length }}</h3>
+                            <p class="text-muted mb-0">Reviews Given</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            {% set avg_received = received_reviews|map(attribute='rating')|list|sum / received_reviews|length if received_reviews else 0 %}
+                            <h3 class="text-warning">{{ "%.1f"|format(avg_received) }}</h3>
+                            <p class="text-muted mb-0">Average Rating Received</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            {% set avg_given = given_reviews|map(attribute='rating')|list|sum / given_reviews|length if given_reviews else 0 %}
+                            <h3 class="text-info">{{ "%.1f"|format(avg_given) }}</h3>
+                            <p class="text-muted mb-0">Average Rating Given</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

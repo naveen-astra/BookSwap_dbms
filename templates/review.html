@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-star me-2"></i>Review Book
+        </h1>
+        <p class="page-subtitle">Share your thoughts about this book</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-book me-2"></i>Book Review
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label for="rating" class="form-label">
+                                <i class="fas fa-star me-2"></i>Rating (1-5 stars)
+                            </label>
+                            <select name="rating" id="rating" class="form-control" required>
+                                <option value="">Select rating...</option>
+                                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                <option value="4">⭐⭐⭐⭐ Good</option>
+                                <option value="3">⭐⭐⭐ Average</option>
+                                <option value="2">⭐⭐ Below Average</option>
+                                <option value="1">⭐ Poor</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="comment" class="form-label">
+                                <i class="fas fa-comment me-2"></i>Your Review
+                            </label>
+                            <textarea name="comment" id="comment" class="form-control" rows="5" 
+                                      placeholder="Share your thoughts about the book quality, condition, content, etc..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('my_return_requests') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-star me-1"></i>Submit Book Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Review Guidelines:</strong> Please provide honest feedback about the book's condition, 
+                    quality, and your reading experience to help other users make informed decisions.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

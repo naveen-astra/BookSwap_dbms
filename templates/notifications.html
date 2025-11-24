@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-bell me-2"></i>Notifications
+        </h1>
+        <p class="page-subtitle">Stay updated with your BookXchange activities</p>
+    </div>
+</div>
+
+<div class="container">
+    {% if notifications %}
+    <div class="row">
+        <div class="col-12">
+            <div class="notifications-list">
+                {% for n in notifications %}
+                <div class="notification-card {% if n.status == 'unread' %}notification-unread{% endif %}">
+                    <div class="notification-icon">
+                        {% if n.type == 'swap_request' %}
+                            <i class="fas fa-exchange-alt"></i>
+                        {% elif n.type == 'review' %}
+                            <i class="fas fa-star"></i>
+                        {% elif n.type == 'message' %}
+                            <i class="fas fa-comment"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <span class="notification-type">
+                                {% if n.type == 'swap_request' %}
+                                    <span class="status-badge status-pending">
+                                        <i class="fas fa-exchange-alt me-1"></i>Swap Request
+                                    </span>
+                                {% elif n.type == 'review' %}
+                                    <span class="status-badge status-accepted">
+                                        <i class="fas fa-star me-1"></i>Review
+                                    </span>
+                                {% elif n.type == 'message' %}
+                                    <span class="status-badge" style="background: rgba(0, 122, 204, 0.2); color: #0099ff; border: 1px solid rgba(0, 122, 204, 0.3);">
+                                        <i class="fas fa-comment me-1"></i>Message
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge" style="background: rgba(108, 117, 125, 0.2); color: #6c757d; border: 1px solid rgba(108, 117, 125, 0.3);">
+                                        <i class="fas fa-info-circle me-1"></i>Info
+                                    </span>
+                                {% endif %}
+                            </span>
+                            <span class="notification-time">
+                                <i class="fas fa-clock me-1"></i>{{ n.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                            </span>
+                        </div>
+                        <div class="notification-text">
+                            {{ n.content }}
+                        </div>
+                        {% if n.status == 'unread' %}
+                        <div class="notification-status">
+                            <span class="unread-indicator">
+                                <i class="fas fa-circle me-1"></i>New
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center">
+        <div class="card">
+            <div class="card-body">
+                <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Notifications</h4>
+                <p class="text-muted">You're all caught up! No new notifications to display.</p>
+                <a href="{{ url_for('available_books') }}" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Browse Books
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Notifications List Styling */
+.notifications-list {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.notification-card {
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    border-color: rgba(0, 212, 170, 0.3);
+}
+
+.notification-card.notification-unread {
+    border-left: 4px solid #00d4aa;
+    background: rgba(0, 212, 170, 0.05);
+}
+
+.notification-card.notification-unread::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4aa, #007acc);
+}
+
+.notification-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4aa, #007acc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.notification-type {
+    flex-shrink: 0;
+}
+
+.notification-time {
+    color: #b8b9ca;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.notification-text {
+    color: #e8e9fa;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.notification-status {
+    margin-top: 0.5rem;
+}
+
+.unread-indicator {
+    color: #00d4aa;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+.unread-indicator i {
+    font-size: 0.7rem;
+    animation: pulse 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .notification-card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification-icon {
+        margin: 0 auto 1rem auto;
+    }
+    
+    .notification-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+    }
+    
+    .notification-time {
+        font-size: 0.8rem;
+    }
+}
+
+/* Empty state styling */
+.text-center .card {
+    max-width: 400px;
+    margin: 0 auto;
+}
+</style>
+
+{% endblock %}

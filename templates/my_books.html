@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-book me-2"></i>My Books
+        </h1>
+        <p class="page-subtitle">Manage your personal book collection</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="mb-4">
+        <a class="btn btn-success" href="{{ url_for('add_book') }}">
+            <i class="fas fa-plus me-2"></i>Add New Book
+        </a>
+    </div>
+
+    {% if books %}
+    <div class="table-responsive dark-table">
+        <table class="table table-hover align-middle dark-table-content">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-book me-2"></i>Title</th>
+                    <th><i class="fas fa-user me-2"></i>Author</th>
+                    <th><i class="fas fa-tags me-2"></i>Genre</th>
+                    <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                    <th><i class="fas fa-cogs me-2"></i>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for book in books %}
+                <tr>
+                    <td class="fw-bold">{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>
+                        <span class="status-badge status-available">{{ book.genre }}</span>
+                    </td>
+                    <td>
+                        {% if book.status == "available" %}
+                            <span class="status-badge status-available">
+                                <i class="fas fa-check-circle me-1"></i>Available
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-swapped">
+                                <i class="fas fa-exchange-alt me-1"></i>Swapped
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if book.status == "swapped" %}
+                            <a href="{{ url_for('request_return', book_id=book.book_id) }}" 
+                               class="btn btn-warning btn-sm">
+                                <i class="fas fa-paper-plane me-1"></i>Request Return
+                            </a>
+                        {% else %}
+                            <span class="text-muted">
+                                <i class="fas fa-clock me-1"></i>Waiting for swaps
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center">
+        <div class="card">
+            <div class="card-body">
+                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No Books Added Yet</h4>
+                <p class="text-muted">Start building your library by adding your first book!</p>
+                <a href="{{ url_for('add_book') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add Your First Book
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Override Bootstrap table styling with dark theme */
+.dark-table {
+    background: rgba(26, 26, 46, 0.9) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-table-content {
+    background: rgba(26, 26, 46, 0.9) !important;
+    color: #e8e9fa !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+}
+
+.dark-table-content thead {
+    background: linear-gradient(135deg, #00d4aa, #007acc) !important;
+    color: white !important;
+}
+
+.dark-table-content thead th {
+    border: none !important;
+    padding: 1.2rem 1rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.9rem !important;
+    color: white !important;
+    background: transparent !important;
+}
+
+.dark-table-content tbody tr {
+    transition: all 0.3s ease !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(26, 26, 46, 0.8) !important;
+}
+
+.dark-table-content tbody tr:hover {
+    background: rgba(0, 212, 170, 0.1) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 5px 15px rgba(0, 212, 170, 0.2) !important;
+}
+
+.dark-table-content tbody td {
+    border: none !important;
+    padding: 1rem !important;
+    vertical-align: middle !important;
+    color: #e8e9fa !important;
+    background: transparent !important;
+}
+
+/* Enhanced status badges with better contrast */
+.status-badge {
+    padding: 0.5rem 1rem !important;
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    border: 2px solid !important;
+}
+
+.status-available {
+    background: rgba(0, 212, 170, 0.2) !important;
+    color: #00ffcc !important;
+    border-color: #00d4aa !important;
+}
+
+.status-swapped {
+    background: rgba(255, 99, 71, 0.2) !important;
+    color: #ff6347 !important;
+    border-color: #ff4500 !important;
+}
+</style>
+
+{% endblock %}

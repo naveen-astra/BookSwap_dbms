@@ -1,0 +1,137 @@
+/* -------------------
+   Global Styles
+------------------- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #fff59d, #ffe082); /* yellowish gradient */
+    overflow: hidden;
+}
+
+/* -------------------
+   Container
+------------------- */
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* -------------------
+   Main Title
+------------------- */
+.main-title {
+    color: #ff8f00;
+    font-size: 3.5rem;
+    margin-bottom: 60px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    font-weight: 700;
+    transition: transform 0.3s, color 0.3s;
+    cursor: default;
+}
+.main-title:hover {
+    color: #ff6f00;
+    transform: scale(1.05);
+}
+
+/* -------------------
+   Form Card (Glassmorphism)
+------------------- */
+.form-card {
+    width: 320px;
+    padding: 50px 40px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 25px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+    text-align: center;
+    transition: all 0.6s ease;
+    opacity: 1;
+    margin: 0 auto;
+}
+
+/* -------------------
+   Slide Animations
+------------------- */
+.slide-in { transform: translateX(-100%); animation: slideIn 0.6s forwards; }
+.slide-in-right { transform: translateX(100%); animation: slideInRight 0.6s forwards; }
+.slide-out-left { animation: slideOutLeft 0.6s forwards; }
+.slide-out-right { animation: slideOutRight 0.6s forwards; }
+
+@keyframes slideIn { 0% { transform: translateX(-100%); opacity:0 } 100% { transform: translateX(0); opacity:1 } }
+@keyframes slideInRight { 0% { transform: translateX(100%); opacity:0 } 100% { transform: translateX(0); opacity:1 } }
+@keyframes slideOutLeft { 0% { transform: translateX(0); opacity:1 } 100% { transform: translateX(-100%); opacity:0 } }
+@keyframes slideOutRight { 0% { transform: translateX(0); opacity:1 } 100% { transform: translateX(100%); opacity:0 } }
+
+/* -------------------
+   Form Headings
+------------------- */
+.form-card h2 { color: #ff6f00; margin-bottom: 10px; font-size: 2rem; }
+.welcome-text { color: #bf360c; font-size: 0.95rem; margin-bottom: 30px; }
+
+/* -------------------
+   Inputs
+------------------- */
+.form-card input {
+    width: 90%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.35);
+    color: #5d4037;
+    transition: all 0.3s ease;
+}
+
+.form-card input::placeholder { color: rgba(93,64,55,0.7); }
+.form-card input:focus { background: rgba(255,255,255,0.5); transform: translateY(-2px); }
+
+/* -------------------
+   Buttons
+------------------- */
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #ffb74d, #ffa000);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #ffd54f, #ff8f00);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* -------------------
+   Switch Form
+------------------- */
+.switch-form { color: #5d4037; margin-top: 20px; font-size: 0.95rem; }
+.switch-form a {
+    cursor: pointer;
+    color: #ff8f00;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.switch-form a:hover { color: #ffa000; text-decoration: underline; }
+
+/* -------------------
+   Responsive
+------------------- */
+@media (max-width: 420px) {
+    .container { padding: 0 15px; }
+    .main-title { font-size: 2.5rem; margin-bottom: 40px; }
+    .form-card { width: 100%; padding: 40px 20px; }
+}
