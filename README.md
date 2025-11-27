@@ -82,7 +82,7 @@ Sample_Queries.sql
 README.md
 
 ## Contributors
+Naveen Babu M S
 Kishore B  
-Koushal Reddy M  
-Naveen Babu M S  
+Koushal Reddy M    
 Sai Charan M
